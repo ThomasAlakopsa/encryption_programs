@@ -67,12 +67,18 @@ def repeating_xor_key(message_bytes, key):
     return output_bytes
 
 
+""" rates a byte string with the given frequency_table """
+
+
 def rating(i_bytes, frequency):
     rating = 0
     for char in i_bytes.lower():
         char_score = frequency.get(chr(char), 0)
         rating += float(char_score)
     return round(rating, 3)
+
+
+""" brutefore a byte string and sorts it acourding the function above"""
 
 
 def bruteforce_single_char_xor_sorted(ciphertext):
@@ -87,6 +93,9 @@ def bruteforce_single_char_xor_sorted(ciphertext):
         }
         potential_messages.append(data)
     return sorted(potential_messages, key=lambda x: x['score'], reverse=True)[0]
+
+
+"""" brutefore a hex encoded txt file and sort it with the sort function above"""
 
 
 def bruteforce_single_char_file_sorted(file_name):
@@ -112,6 +121,8 @@ def bruteforce_single_char_file_sorted(file_name):
     return sentence
 
 
+""" calculate the hamming distance between two byte strings """
+
 def calculate_hamming_distance(byets_str1, bytes_str2):
     hamming_distance = 0
     byte_string = xor_two_byte_strings(byets_str1, bytes_str2)
@@ -120,6 +131,9 @@ def calculate_hamming_distance(byets_str1, bytes_str2):
             if (bit == '1'):
                 hamming_distance += 1
     return (hamming_distance)
+
+
+""" break a base64 encoded txt file with a unkown repeating key size"""
 
 
 def break_repeating_key_xor():
@@ -144,7 +158,7 @@ def break_repeating_key_xor():
         }
         average_hamming.append(result)
     possible_key_lengths = sorted(
-        average_hamming, key=lambda x: x['avg hamming'])[0]
+            average_hamming, key=lambda x: x['avg hamming'])[0]
     key_lenght = possible_key_lengths['key']
 
     key = b''
@@ -157,4 +171,5 @@ def break_repeating_key_xor():
     return max(possible_plaintext, key=lambda x: rating(x[0], frequency_table))
 
 
+""" run opdracht 6 """
 print(break_repeating_key_xor())
