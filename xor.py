@@ -132,7 +132,7 @@ def break_repeating_key_xor():
         hamming = []
         chunks = [ciphertext[i:i + keysize]
                   for i in range(0, len(ciphertext), keysize)]
-        for i in range(0, 16, 2):
+        for i in range(0, 24, 2):
             chunk_0 = chunks[i]
             chunk_1 = chunks[i + 1]
             ham = calculate_hamming_distance(chunk_0, chunk_1)
@@ -145,19 +145,16 @@ def break_repeating_key_xor():
         average_hamming.append(result)
     possible_key_lengths = sorted(
         average_hamming, key=lambda x: x['avg hamming'])[0]
-    key = possible_key_lengths['key']
+    key_lenght = possible_key_lengths['key']
 
-    chunks = [ciphertext[i:i + key] for i in range(0, len(ciphertext), key)]
-
-    for i in range(key):
-        p = 0
-        print("-------------------------------------------------------------------------")
-        for j in range(len(chunks)):
-            print ("chunk: %s   position: %s            value: %s" %
-                   (j, i, chunks[j][i]))
-        #print (p)
-
- # comment
+    key = b''
+    for i in range(key_lenght):
+        block = b''
+        for j in range(i, len(ciphertext), key_lenght):
+            block += bytes([ciphertext[j]])
+        key += bytes([bruteforce_single_char_xor_sorted(block)['key']])
+    possible_plaintext.append((repeating_xor_key(ciphertext, key), key))
+    return max(possible_plaintext, key=lambda x: rating(x[0], frequency_table))
 
 
-break_repeating_key_xor()
+print(break_repeating_key_xor())
