@@ -137,16 +137,22 @@ def calculate_hamming_distance(byets_str1, bytes_str2):
 
 
 def break_repeating_key_xor():
-    with open("6.txt")as f:
-        ciphertext = base64.b64decode(f.read())
-    average_hamming = []
+    with open("6.txt")as f:                         #open the file
+        ciphertext = base64.b64decode(f.read())     #decode the file
+    average_hamming = []                            #init value's
     possible_plaintext = []
     possible_key_lengths = []
-    for keysize in range(2, 42):
+    for keysize in range(2, 42):                    #take possible key range of 2 tot 42
         hamming = []
+
+        """ devide the ciphertext in chucks the size of possible key size """
+
         chunks = [ciphertext[i:i + keysize]
                   for i in range(0, len(ciphertext), keysize)]
-        for i in range(0, 24, 2):
+
+        """ calculate the hamming_distance with help of the first 10 chuncks  """
+
+        for i in range(0, 10):
             chunk_0 = chunks[i]
             chunk_1 = chunks[i + 1]
             ham = calculate_hamming_distance(chunk_0, chunk_1)
@@ -154,19 +160,23 @@ def break_repeating_key_xor():
 
         result = {
             'key': keysize,
-            'avg hamming': sum(hamming) / len(hamming)
+            'avg hamming': sum(hamming) / len(hamming) #normalize the hamming
         }
         average_hamming.append(result)
+
+    """ sort all the possible keys and save the one with the smallest hamming distace"""
     possible_key_lengths = sorted(
             average_hamming, key=lambda x: x['avg hamming'])[0]
+
     key_lenght = possible_key_lengths['key']
+
 
     key = b''
     for i in range(key_lenght):
         block = b''
         for j in range(i, len(ciphertext), key_lenght):
-            block += bytes([ciphertext[j]])
-        key += bytes([bruteforce_single_char_xor_sorted(block)['key']])
+            block += bytes([ciphertext[j]]) #safe ciphertext in byte blocks of the key keysize
+        key += bytes([bruteforce_single_char_xor_sorted(block)['key']]) #brutefore the ciphertext blocks
     possible_plaintext.append((repeating_xor_key(ciphertext, key), key))
     return max(possible_plaintext, key=lambda x: rating(x[0], frequency_table))
 
